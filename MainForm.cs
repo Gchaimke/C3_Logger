@@ -14,6 +14,7 @@ namespace C3_Logger
 {
     public partial class MainForm : Form
     {
+        private SettingsForm settingsForm;
         String documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string strcount = "";
         IntPtr h = IntPtr.Zero;
@@ -40,7 +41,9 @@ namespace C3_Logger
         {
             Cursor = Cursors.WaitCursor;
             string str = "";
-            str = "protocol=TCP,ipaddress=" + this.txbIP.Text + ",port=4370,timeout=3000,passwd=";  //protocol=TCP,ipaddress=192.168.2.46,port=4370,timeout=2000,passwd=
+            str = "protocol=TCP,ipaddress=" + Properties.Settings.Default.IP +
+                ",port="+Properties.Settings.Default.Port +
+                ",timeout=3000,passwd="+Properties.Settings.Default.Pass;  //protocol=TCP,ipaddress=192.168.2.46,port=4370,timeout=2000,passwd=
             if (IntPtr.Zero == h)
             {
                 h = Connect(str);
@@ -58,7 +61,7 @@ namespace C3_Logger
                 }
                 else
                 {
-                    txbLog.Text += "Connection error!"+ Environment.NewLine;
+                    txbLog.Text += "Connection error! Cant conncet to address "+ Properties.Settings.Default.IP+":"+ Properties.Settings.Default.Port+ Environment.NewLine;
                 }
                 Cursor = Cursors.Default;
             }
@@ -251,7 +254,7 @@ namespace C3_Logger
 
         private void getUserNames()
         {
-            string mdfFile = @"C:\ZKTeco\ZKAccess3.5\access.mdb";
+            string mdfFile = Properties.Settings.Default.dbPath;
 
             using (OleDbConnection connection = new OleDbConnection(string.Format("Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}", mdfFile)))
             {
@@ -284,14 +287,20 @@ namespace C3_Logger
         private void pictureBox1_MouseHover(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
-            pictureBox1.BackColor = Color.Gray;
+            pbSettings.BackColor = Color.Gray;
         }
 
         private void pictureBox1_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
-            pictureBox1.BackColor = Color.Transparent;
+            pbSettings.BackColor = Color.Transparent;
 
+        }
+
+        private void pbSettings_Click(object sender, EventArgs e)
+        {
+            settingsForm = new SettingsForm();
+            settingsForm.Show();
         }
     }
 }
