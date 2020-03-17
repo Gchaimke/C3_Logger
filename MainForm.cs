@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -11,33 +12,32 @@ using System.Windows.Forms;
 
 namespace C3_Logger
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         String documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string strcount = "";
         IntPtr h = IntPtr.Zero;
         Dictionary<int, String> users = new Dictionary<int, String>();
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
         }
 
-        [DllImport("plcommpro.dll", EntryPoint = "Connect")]
+        [DllImport(@"lib\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
 
-        [DllImport("plcommpro.dll", EntryPoint = "PullLastError")]
+        [DllImport(@"lib\plcommpro.dll", EntryPoint = "PullLastError")]
         public static extern int PullLastError();
 
-        [DllImport("plcommpro.dll", EntryPoint = "Disconnect")]
+        [DllImport(@"lib\plcommpro.dll", EntryPoint = "Disconnect")]
         public static extern void Disconnect(IntPtr h);
 
-        [DllImport("plcommpro.dll", EntryPoint = "GetDeviceData")]
+        [DllImport(@"lib\plcommpro.dll", EntryPoint = "GetDeviceData")]
         public static extern int GetDeviceData(IntPtr h, ref byte buffer, int buffersize, string tablename, string filename, string filter, string options);
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            Disconnect(h);
             Cursor = Cursors.WaitCursor;
             string str = "";
             str = "protocol=TCP,ipaddress=" + this.txbIP.Text + ",port=4370,timeout=3000,passwd=";  //protocol=TCP,ipaddress=192.168.2.46,port=4370,timeout=2000,passwd=
@@ -279,6 +279,19 @@ namespace C3_Logger
         {
             //dbTest();
             buildHTML(2020,03);
+        }
+
+        private void pictureBox1_MouseHover(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+            pictureBox1.BackColor = Color.Gray;
+        }
+
+        private void pictureBox1_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+            pictureBox1.BackColor = Color.Transparent;
+
         }
     }
 }
