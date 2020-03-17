@@ -214,42 +214,51 @@ namespace C3_Logger
         {
             DateTimeFormatInfo dinfo = new DateTimeFormatInfo();
             int nodays = DateTime.DaysInMonth(year, month);
+            try { 
+                StreamReader sr = new StreamReader(Properties.Settings.Default.LogPath);
+                StreamWriter sw = new StreamWriter(documents + "\\ESD_LOG.html");
 
-            StreamReader sr = new StreamReader(documents + "\\ESD_LOG.csv");
-            StreamWriter sw = new StreamWriter(documents + "\\ESD_LOG.html");
+                String page_start = "<!doctype html>\n <html lang = \"en\">\n<head><meta charset = \"utf-8\">\n" +
+                    "<title> ESD Table</title>\n" +
+                    "<meta name=\"description\"content=\"The HTML5 Herald\">\n" +
+                    "<meta name=\"author\"content=\"SitePoint\">\n" +
+                    "<link rel=\"stylesheet\" href=\"styles.css?v=1.0\"> </head><body>\n" +
+                    "<script src=\"script.js\"></script>";
 
-            String page_start = "<!doctype html>\n <html lang = \"en\">\n<head><meta charset = \"utf-8\">\n" +
-                "<title> ESD Table</title>\n" +
-                "<meta name=\"description\"content=\"The HTML5 Herald\">\n" +
-                "<meta name=\"author\"content=\"SitePoint\">\n" +
-                "<link rel=\"stylesheet\" href=\"styles.css?v=1.0\"> </head><body>\n" +
-                "<script src=\"script.js\"></script>";
-
-            sw.WriteLine(page_start);
-            String table = "<table id='tbMonth'>";
-            String[] headLine = sr.ReadLine().Split(',');
-            getUserNames();
-            table += "<tr><th>ID<th> <th>User Name<th>";
-            for(int i = 0; i <= nodays; i++)
-            {
-                table += "<th>"+ i + "</th>";
-            }
+                sw.WriteLine(page_start);
+                String table = "<table id='tbMonth'>";
+                String[] headLine = sr.ReadLine().Split(',');
+                getUserNames();
+                table += "<tr><th>ID<th> <th>User Name<th>";
+                for(int i = 0; i <= nodays; i++)
+                {
+                    table += "<th>"+ i + "</th>";
+                }
                
-            table += "</tr>";
+                table += "</tr>";
 
-            foreach (KeyValuePair<int, string> user in users)
-            {
-                table += string.Format("<tr><td>{0}</td><td>{1}</td></tr>", user.Key, user.Value);
+                foreach (KeyValuePair<int, string> user in users)
+                {
+                    table += string.Format("<tr><td>{0}</td><td>{1}</td></tr>", user.Key, user.Value);
+                }
+
+                sw.WriteLine(table);
+
+                String page_end="</body></html>";
+                sw.WriteLine(page_end);
+
+                sr.Close();
+                sw.Close();
+                System.Diagnostics.Process.Start(documents);
             }
-
-            sw.WriteLine(table);
-
-            String page_end="</body></html>";
-            sw.WriteLine(page_end);
-
-            sr.Close();
-            sw.Close();
-            System.Diagnostics.Process.Start(documents);
+            catch (FileNotFoundException ex)
+            {
+                txbLog.Text += ex.Message + Environment.NewLine;
+            }
+            catch (Exception ex)
+            {
+                txbLog.Text += ex.Message + Environment.NewLine;
+            }
         }
 
         private void getUserNames()

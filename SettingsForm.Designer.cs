@@ -40,6 +40,9 @@
             this.label4 = new System.Windows.Forms.Label();
             this.txbPass = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.btnSelectLog = new System.Windows.Forms.Button();
+            this.txbLog = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -70,7 +73,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(282, 209);
+            this.btnSave.Location = new System.Drawing.Point(282, 285);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 5;
@@ -80,7 +83,7 @@
             // 
             // txbIp
             // 
-            this.txbIp.Location = new System.Drawing.Point(62, 108);
+            this.txbIp.Location = new System.Drawing.Point(62, 184);
             this.txbIp.Name = "txbIp";
             this.txbIp.Size = new System.Drawing.Size(122, 20);
             this.txbIp.TabIndex = 4;
@@ -88,7 +91,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(14, 111);
+            this.label2.Location = new System.Drawing.Point(14, 187);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(17, 13);
             this.label2.TabIndex = 3;
@@ -96,7 +99,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(12, 209);
+            this.btnCancel.Location = new System.Drawing.Point(12, 285);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 5;
@@ -107,7 +110,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(14, 137);
+            this.label3.Location = new System.Drawing.Point(14, 213);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(26, 13);
             this.label3.TabIndex = 3;
@@ -115,7 +118,7 @@
             // 
             // txbPort
             // 
-            this.txbPort.Location = new System.Drawing.Point(62, 134);
+            this.txbPort.Location = new System.Drawing.Point(62, 210);
             this.txbPort.Name = "txbPort";
             this.txbPort.Size = new System.Drawing.Size(122, 20);
             this.txbPort.TabIndex = 4;
@@ -123,7 +126,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(14, 162);
+            this.label4.Location = new System.Drawing.Point(14, 238);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(30, 13);
             this.label4.TabIndex = 3;
@@ -131,7 +134,7 @@
             // 
             // txbPass
             // 
-            this.txbPass.Location = new System.Drawing.Point(62, 159);
+            this.txbPass.Location = new System.Drawing.Point(62, 235);
             this.txbPass.Name = "txbPass";
             this.txbPass.Size = new System.Drawing.Size(122, 20);
             this.txbPass.TabIndex = 4;
@@ -139,17 +142,46 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(14, 83);
+            this.label5.Location = new System.Drawing.Point(14, 159);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(106, 13);
             this.label5.TabIndex = 3;
             this.label5.Text = "C3-200 TCP Settings";
             // 
+            // btnSelectLog
+            // 
+            this.btnSelectLog.Location = new System.Drawing.Point(282, 105);
+            this.btnSelectLog.Name = "btnSelectLog";
+            this.btnSelectLog.Size = new System.Drawing.Size(75, 23);
+            this.btnSelectLog.TabIndex = 8;
+            this.btnSelectLog.Text = "select";
+            this.btnSelectLog.UseVisualStyleBackColor = true;
+            this.btnSelectLog.Click += new System.EventHandler(this.btnSelectLog_Click);
+            // 
+            // txbLog
+            // 
+            this.txbLog.Location = new System.Drawing.Point(12, 107);
+            this.txbLog.Name = "txbLog";
+            this.txbLog.Size = new System.Drawing.Size(264, 20);
+            this.txbLog.TabIndex = 7;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(9, 82);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(105, 13);
+            this.label6.TabIndex = 6;
+            this.label6.Text = "Select Last Log CSV";
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(372, 244);
+            this.ClientSize = new System.Drawing.Size(372, 320);
+            this.Controls.Add(this.btnSelectLog);
+            this.Controls.Add(this.txbLog);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.txbPass);
@@ -184,5 +216,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txbPass;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button btnSelectLog;
+        private System.Windows.Forms.TextBox txbLog;
+        private System.Windows.Forms.Label label6;
     }
 }
