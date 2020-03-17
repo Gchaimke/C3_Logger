@@ -1,0 +1,11 @@
+
+body {
+    padding: 0;
+}
+
+th {
+    background:aliceblue;
+}
+
+tr:nth-child(even) {background: #CCC}
+tr:nth-child(odd) {background: #FFF}

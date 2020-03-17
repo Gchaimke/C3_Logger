@@ -86,7 +86,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="PullSDK_Development_Guide-EN-V2.0.1-20180111.pdf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -111,6 +110,13 @@
     <Content Include="lib\plusbcomm.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\script.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\styles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\calendar.png" />
     <None Include="Resources\settings.png" />
     <None Include="Resources\minimize.png" />
     <None Include="Resources\close.png" />

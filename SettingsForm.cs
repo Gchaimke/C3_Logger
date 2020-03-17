@@ -69,7 +69,7 @@ namespace C3_Logger
         {
             Properties.Settings.Default.dbPath = txbDBPath.Text;
             Properties.Settings.Default.IP = txbIp.Text;
-            Properties.Settings.Default.Port = txbIp.Text;
+            Properties.Settings.Default.Port = txbPort.Text;
             Properties.Settings.Default.Pass = txbPass.Text;
             Properties.Settings.Default.LogPath = txbLog.Text;
             Properties.Settings.Default.Save();

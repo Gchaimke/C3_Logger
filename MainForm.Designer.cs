@@ -30,16 +30,20 @@
         {
             this.btnConnect = new System.Windows.Forms.Button();
             this.txbLog = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.pbCalendar = new System.Windows.Forms.PictureBox();
             this.pbSettings = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCalendar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSettings)).BeginInit();
             this.SuspendLayout();
             // 
             // btnConnect
             // 
-            this.btnConnect.Location = new System.Drawing.Point(7, 12);
+            this.btnConnect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnConnect.Location = new System.Drawing.Point(9, 14);
+            this.btnConnect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(64, 49);
+            this.btnConnect.Size = new System.Drawing.Size(87, 58);
             this.btnConnect.TabIndex = 1;
             this.btnConnect.Text = "Get Log";
             this.btnConnect.UseVisualStyleBackColor = true;
@@ -48,50 +52,61 @@
             // txbLog
             // 
             this.txbLog.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.txbLog.Location = new System.Drawing.Point(0, 68);
+            this.txbLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.txbLog.Location = new System.Drawing.Point(0, 84);
+            this.txbLog.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txbLog.Multiline = true;
             this.txbLog.Name = "txbLog";
             this.txbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txbLog.Size = new System.Drawing.Size(348, 215);
+            this.txbLog.Size = new System.Drawing.Size(464, 216);
             this.txbLog.TabIndex = 2;
             // 
-            // label1
+            // pbCalendar
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(144, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(24, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "test";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+            this.pbCalendar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pbCalendar.Image = global::C3_Logger.Properties.Resources.calendar;
+            this.pbCalendar.Location = new System.Drawing.Point(104, 14);
+            this.pbCalendar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.pbCalendar.Name = "pbCalendar";
+            this.pbCalendar.Size = new System.Drawing.Size(86, 57);
+            this.pbCalendar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbCalendar.TabIndex = 5;
+            this.pbCalendar.TabStop = false;
+            this.pbCalendar.Click += new System.EventHandler(this.pbCalendar_Click);
+            this.pbCalendar.MouseLeave += new System.EventHandler(this.pbCalendar_MouseLeave);
+            this.pbCalendar.MouseHover += new System.EventHandler(this.pbCalendar_MouseHover);
             // 
             // pbSettings
             // 
             this.pbSettings.BackColor = System.Drawing.Color.Transparent;
             this.pbSettings.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pbSettings.Image = global::C3_Logger.Properties.Resources.settings;
-            this.pbSettings.Location = new System.Drawing.Point(284, 12);
+            this.pbSettings.Location = new System.Drawing.Point(361, 14);
+            this.pbSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbSettings.Name = "pbSettings";
-            this.pbSettings.Size = new System.Drawing.Size(52, 50);
+            this.pbSettings.Size = new System.Drawing.Size(86, 57);
             this.pbSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pbSettings.TabIndex = 4;
             this.pbSettings.TabStop = false;
             this.pbSettings.Click += new System.EventHandler(this.pbSettings_Click);
-            this.pbSettings.MouseLeave += new System.EventHandler(this.pictureBox1_MouseLeave);
-            this.pbSettings.MouseHover += new System.EventHandler(this.pictureBox1_MouseHover);
+            this.pbSettings.MouseLeave += new System.EventHandler(this.pbSettings_MouseLeave);
+            this.pbSettings.MouseHover += new System.EventHandler(this.pbSettings_MouseHover);
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(348, 283);
+            this.ClientSize = new System.Drawing.Size(464, 300);
+            this.Controls.Add(this.pbCalendar);
             this.Controls.Add(this.pbSettings);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.txbLog);
             this.Controls.Add(this.btnConnect);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "MainForm";
             this.Text = "C3-200 Get Log";
+            ((System.ComponentModel.ISupportInitialize)(this.pbCalendar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSettings)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -101,8 +116,8 @@
         #endregion
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.TextBox txbLog;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pbSettings;
+        private System.Windows.Forms.PictureBox pbCalendar;
     }
 }
 

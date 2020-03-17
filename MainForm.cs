@@ -15,7 +15,7 @@ namespace C3_Logger
     public partial class MainForm : Form
     {
         private SettingsForm settingsForm;
-        String documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        String documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ESD_LOGS\\";
         string strcount = "";
         IntPtr h = IntPtr.Zero;
         Dictionary<int, String> users = new Dictionary<int, String>();
@@ -23,6 +23,12 @@ namespace C3_Logger
         public MainForm()
         {
             InitializeComponent();
+            if (!Directory.Exists(documents))
+            {
+                Directory.CreateDirectory(documents);
+                File.Copy(@"Resources\script.js", documents + "script.js");
+                File.Copy(@"Resources\styles.css", documents + "styles.css");
+            }
         }
 
         [DllImport(@"lib\plcommpro.dll", EntryPoint = "Connect")]
@@ -158,6 +164,7 @@ namespace C3_Logger
                 txbLog.Text += ex.Message + Environment.NewLine;
             }
 
+
             StreamReader sr = new StreamReader(documents + "\\ESD_LOG.ROW");
             try
             {
@@ -181,6 +188,7 @@ namespace C3_Logger
                     sw.WriteLine(line);
                 }
                 sw.Close();
+                txbLog.Text += "Log created: "+documents + "\\ESD_LOG.csv" + Environment.NewLine;
             }
             catch (Exception ex)
             {
@@ -214,9 +222,10 @@ namespace C3_Logger
         {
             DateTimeFormatInfo dinfo = new DateTimeFormatInfo();
             int nodays = DateTime.DaysInMonth(year, month);
+            getUserNames();
             try { 
                 StreamReader sr = new StreamReader(Properties.Settings.Default.LogPath);
-                StreamWriter sw = new StreamWriter(documents + "\\ESD_LOG.html");
+                StreamWriter sw = new StreamWriter(documents + year + "_" + month + ".html");
 
                 String page_start = "<!doctype html>\n <html lang = \"en\">\n<head><meta charset = \"utf-8\">\n" +
                     "<title> ESD Table</title>\n" +
@@ -226,11 +235,10 @@ namespace C3_Logger
                     "<script src=\"script.js\"></script>";
 
                 sw.WriteLine(page_start);
-                String table = "<table id='tbMonth'>";
+                String table = "<table id='tbMonth' border='1'>";
                 String[] headLine = sr.ReadLine().Split(',');
-                getUserNames();
-                table += "<tr><th>ID<th> <th>User Name<th>";
-                for(int i = 0; i <= nodays; i++)
+                table += "<tr><th>ID</th> <th>User Name</th>";
+                for(int i = 1; i <= nodays; i++)
                 {
                     table += "<th>"+ i + "</th>";
                 }
@@ -246,10 +254,10 @@ namespace C3_Logger
 
                 String page_end="</body></html>";
                 sw.WriteLine(page_end);
-
                 sr.Close();
                 sw.Close();
                 System.Diagnostics.Process.Start(documents);
+                txbLog.Text += "Report created: " + documents + year + "_" + month + ".html" + Environment.NewLine;
             }
             catch (FileNotFoundException ex)
             {
@@ -280,26 +288,27 @@ namespace C3_Logger
                     {
                         object nameValue = row["NAME"];
                         object userNum = row["Badgenumber"];
+                        try
+                        {
+                            users.Add(Int16.Parse(userNum.ToString()), nameValue.ToString());
+                        }
+                        catch (ArgumentException)
+                        {
 
-                        users.Add(Int16.Parse(userNum.ToString()),nameValue.ToString());
+                        }
+                        
                     }
                 }
             }
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-            //dbTest();
-            buildHTML(2020,03);
-        }
-
-        private void pictureBox1_MouseHover(object sender, EventArgs e)
+        private void pbSettings_MouseHover(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
             pbSettings.BackColor = Color.Gray;
         }
 
-        private void pictureBox1_MouseLeave(object sender, EventArgs e)
+        private void pbSettings_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
             pbSettings.BackColor = Color.Transparent;
@@ -310,6 +319,23 @@ namespace C3_Logger
         {
             settingsForm = new SettingsForm();
             settingsForm.Show();
+        }
+
+        private void pbCalendar_Click(object sender, EventArgs e)
+        {
+            buildHTML(2020, 03);
+        }
+
+        private void pbCalendar_MouseHover(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+            pbCalendar.BackColor = Color.Gray;
+        }
+
+        private void pbCalendar_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+            pbCalendar.BackColor = Color.Transparent;
         }
     }
 }
