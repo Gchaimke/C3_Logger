@@ -76,6 +76,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="PullSDK_Development_Guide-EN-V2.0.1-20180111.pdf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
