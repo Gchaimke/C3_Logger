@@ -43,12 +43,15 @@
             this.btnSelectLog = new System.Windows.Forms.Button();
             this.txbLog = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 23);
+            this.label1.Location = new System.Drawing.Point(10, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(152, 13);
             this.label1.TabIndex = 0;
@@ -56,14 +59,14 @@
             // 
             // txbDBPath
             // 
-            this.txbDBPath.Location = new System.Drawing.Point(14, 48);
+            this.txbDBPath.Location = new System.Drawing.Point(14, 46);
             this.txbDBPath.Name = "txbDBPath";
-            this.txbDBPath.Size = new System.Drawing.Size(307, 20);
+            this.txbDBPath.Size = new System.Drawing.Size(383, 20);
             this.txbDBPath.TabIndex = 1;
             // 
             // btnSelectDB
             // 
-            this.btnSelectDB.Location = new System.Drawing.Point(329, 46);
+            this.btnSelectDB.Location = new System.Drawing.Point(403, 43);
             this.btnSelectDB.Name = "btnSelectDB";
             this.btnSelectDB.Size = new System.Drawing.Size(87, 23);
             this.btnSelectDB.TabIndex = 2;
@@ -73,7 +76,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(329, 285);
+            this.btnSave.Location = new System.Drawing.Point(403, 285);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(87, 23);
             this.btnSave.TabIndex = 5;
@@ -122,6 +125,7 @@
             this.txbPort.Name = "txbPort";
             this.txbPort.Size = new System.Drawing.Size(142, 20);
             this.txbPort.TabIndex = 4;
+            this.txbPort.Text = "4370";
             // 
             // label4
             // 
@@ -150,7 +154,7 @@
             // 
             // btnSelectLog
             // 
-            this.btnSelectLog.Location = new System.Drawing.Point(329, 105);
+            this.btnSelectLog.Location = new System.Drawing.Point(403, 121);
             this.btnSelectLog.Name = "btnSelectLog";
             this.btnSelectLog.Size = new System.Drawing.Size(87, 23);
             this.btnSelectLog.TabIndex = 8;
@@ -160,25 +164,55 @@
             // 
             // txbLog
             // 
-            this.txbLog.Location = new System.Drawing.Point(14, 107);
+            this.txbLog.Location = new System.Drawing.Point(14, 121);
             this.txbLog.Name = "txbLog";
-            this.txbLog.Size = new System.Drawing.Size(307, 20);
+            this.txbLog.Size = new System.Drawing.Size(383, 20);
             this.txbLog.TabIndex = 7;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(10, 82);
+            this.label6.Location = new System.Drawing.Point(10, 90);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(124, 13);
             this.label6.TabIndex = 6;
             this.label6.Text = "Select Last Log CSV";
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label7.Location = new System.Drawing.Point(10, 28);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(268, 13);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "Default file is: \"C:\\ZKTeco\\ZKAccess3.5\\access.mdb\"";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label8.Location = new System.Drawing.Point(12, 105);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(290, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "Default file is: \"%Documents%\\ESD_LOGS\\ESD_LOG.csv\"";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label9.Location = new System.Drawing.Point(220, 213);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(103, 13);
+            this.label9.TabIndex = 0;
+            this.label9.Text = "Default Port is: 4370";
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(434, 320);
+            this.ClientSize = new System.Drawing.Size(502, 320);
             this.Controls.Add(this.btnSelectLog);
             this.Controls.Add(this.txbLog);
             this.Controls.Add(this.label6);
@@ -193,6 +227,9 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnSelectDB);
             this.Controls.Add(this.txbDBPath);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -220,5 +257,8 @@
         private System.Windows.Forms.Button btnSelectLog;
         private System.Windows.Forms.TextBox txbLog;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
     }
 }

@@ -25,6 +25,8 @@
         /// Defines the documents
         /// </summary>
         internal String documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ESD_LOGS\\";
+        internal String rowLog = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ESD_LOGS\\ESD_LOG.ROW";
+        internal String csvLog = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ESD_LOGS\\ESD_LOG.csv";
 
         /// <summary>
         /// Defines the strcount
@@ -53,7 +55,10 @@
                 File.Copy(@"Resources\script.js", documents + "script.js");
                 File.Copy(@"Resources\styles.css", documents + "styles.css");
             }
-            getUserNames();
+            if(!File.Exists(documents + "script.js"))
+                File.Copy(@"Resources\script.js", documents + "script.js");
+            if (!File.Exists(documents + "styles.css"))
+                File.Copy(@"Resources\styles.css", documents + "styles.css");
         }
 
         /// <summary>
@@ -153,7 +158,7 @@
                 strcount = Encoding.Default.GetString(buffer);
                 try
                 {
-                    StreamWriter sw = new StreamWriter(documents + "\\ESD_LOG.ROW");
+                    StreamWriter sw = new StreamWriter(rowLog);
                     sw.WriteLine(strcount);
                     sw.Close();
                 }
@@ -229,11 +234,11 @@
             }
 
 
-            StreamReader sr = new StreamReader(documents + "\\ESD_LOG.ROW");
+            StreamReader sr = new StreamReader(rowLog);
             try
             {
 
-                StreamWriter sw = new StreamWriter(documents + "\\ESD_LOG.csv");
+                StreamWriter sw = new StreamWriter(csvLog);
                 sw.WriteLine("Name," + sr.ReadLine() + ",Day,Month,Year");
                 while (sr.Peek() > 0)
                 {
@@ -252,7 +257,7 @@
                     sw.WriteLine(line);
                 }
                 sw.Close();
-                txbLog.Text += "Log created: " + documents + "\\ESD_LOG.csv" + Environment.NewLine;
+                txbLog.Text += "Log created: " + csvLog + Environment.NewLine;
             }
             catch (Exception ex)
             {
@@ -271,10 +276,10 @@
             try
             {
                 // Check if file exists with its full path    
-                if (File.Exists(documents + "\\ESD_LOG.ROW"))
+                if (File.Exists(rowLog))
                 {
                     // If file found, delete it    
-                    File.Delete(documents + "\\ESD_LOG.ROW");
+                    File.Delete(rowLog);
                     Console.WriteLine("File deleted.");
                 }
                 else Console.WriteLine("File not found");
@@ -354,7 +359,10 @@
         private void getUserNames()
         {
             string mdfFile = Properties.Settings.Default.dbPath;
-
+            if (!File.Exists(mdfFile))
+            {
+                mdfFile = @"C:\ZKTeco\ZKAccess3.5\access.mdb";
+            }
             using (OleDbConnection connection = new OleDbConnection(string.Format("Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}", mdfFile)))
             {
                 using (OleDbCommand selectCommand = new OleDbCommand("SELECT * FROM USERINFO", connection))
@@ -391,11 +399,11 @@
 
             
 
-            if (File.Exists(documents + "\\ESD_LOG.csv"))
+            if (File.Exists(csvLog))
             {
                 foreach (var user in users)
                 {
-                    StreamReader sr = new StreamReader(documents + "\\ESD_LOG.csv");
+                    StreamReader sr = new StreamReader(csvLog);
                     String[] tmp = sr.ReadLine().Split(',');
                     monthStats[user.Key, 0] = user.Value;
                     for(int i = 0; i < monthDays; i++)
@@ -412,13 +420,10 @@
                     sr.Close();
                 }
 
-
-
-
             }
             else
             {
-                txbLog.Text += "File not found" + Environment.NewLine;
+                txbLog.Text += csvLog+" not found" + Environment.NewLine;
             }
             return monthStats;
         }
