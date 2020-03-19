@@ -33,6 +33,7 @@
             this.pbCalendar = new System.Windows.Forms.PictureBox();
             this.pbSettings = new System.Windows.Forms.PictureBox();
             this.datePeack = new System.Windows.Forms.DateTimePicker();
+            this.lblAbout = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbCalendar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSettings)).BeginInit();
             this.SuspendLayout();
@@ -54,19 +55,19 @@
             // 
             this.txbLog.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.txbLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.txbLog.Location = new System.Drawing.Point(0, 104);
+            this.txbLog.Location = new System.Drawing.Point(0, 118);
             this.txbLog.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txbLog.Multiline = true;
             this.txbLog.Name = "txbLog";
             this.txbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txbLog.Size = new System.Drawing.Size(571, 196);
+            this.txbLog.Size = new System.Drawing.Size(481, 182);
             this.txbLog.TabIndex = 2;
             // 
             // pbCalendar
             // 
             this.pbCalendar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pbCalendar.Image = global::C3_Logger.Properties.Resources.calendar;
-            this.pbCalendar.Location = new System.Drawing.Point(397, 12);
+            this.pbCalendar.Location = new System.Drawing.Point(309, 12);
             this.pbCalendar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbCalendar.Name = "pbCalendar";
             this.pbCalendar.Size = new System.Drawing.Size(86, 72);
@@ -82,7 +83,7 @@
             this.pbSettings.BackColor = System.Drawing.Color.Transparent;
             this.pbSettings.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pbSettings.Image = global::C3_Logger.Properties.Resources.settings;
-            this.pbSettings.Location = new System.Drawing.Point(525, 12);
+            this.pbSettings.Location = new System.Drawing.Point(432, 12);
             this.pbSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbSettings.Name = "pbSettings";
             this.pbSettings.Size = new System.Drawing.Size(33, 34);
@@ -96,17 +97,29 @@
             // datePeack
             // 
             this.datePeack.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.datePeack.Location = new System.Drawing.Point(226, 12);
+            this.datePeack.Location = new System.Drawing.Point(187, 12);
             this.datePeack.Name = "datePeack";
             this.datePeack.Size = new System.Drawing.Size(115, 21);
             this.datePeack.TabIndex = 6;
             this.datePeack.Value = new System.DateTime(2020, 3, 18, 12, 30, 48, 0);
             // 
+            // lblAbout
+            // 
+            this.lblAbout.AutoSize = true;
+            this.lblAbout.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblAbout.Location = new System.Drawing.Point(434, 67);
+            this.lblAbout.Name = "lblAbout";
+            this.lblAbout.Size = new System.Drawing.Size(27, 15);
+            this.lblAbout.TabIndex = 7;
+            this.lblAbout.Text = "info";
+            this.lblAbout.Click += new System.EventHandler(this.lblAbout_Click_1);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(571, 300);
+            this.ClientSize = new System.Drawing.Size(481, 300);
+            this.Controls.Add(this.lblAbout);
             this.Controls.Add(this.datePeack);
             this.Controls.Add(this.pbCalendar);
             this.Controls.Add(this.pbSettings);
@@ -130,6 +143,7 @@
         private System.Windows.Forms.PictureBox pbSettings;
         private System.Windows.Forms.PictureBox pbCalendar;
         private System.Windows.Forms.DateTimePicker datePeack;
+        private System.Windows.Forms.Label lblAbout;
     }
 }
 

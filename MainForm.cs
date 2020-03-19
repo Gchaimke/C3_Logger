@@ -5,7 +5,6 @@
     using System.Data;
     using System.Data.OleDb;
     using System.Drawing;
-    using System.Globalization;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -25,8 +24,21 @@
         /// Defines the documents
         /// </summary>
         internal String documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ESD_LOGS\\";
+
+        /// <summary>
+        /// Defines the rowLog
+        /// </summary>
         internal String rowLog = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ESD_LOGS\\ESD_LOG.ROW";
-        internal String csvLog = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ESD_LOGS\\ESD_LOG.csv";
+
+        /// <summary>
+        /// Defines the csvLog
+        /// </summary>
+        internal String csvLog = Properties.Settings.Default.LogPath;
+
+        /// <summary>
+        /// Defines the mdfFile
+        /// </summary>
+        internal String mdfFile = Properties.Settings.Default.dbPath;
 
         /// <summary>
         /// Defines the strcount
@@ -55,10 +67,14 @@
                 File.Copy(@"Resources\script.js", documents + "script.js");
                 File.Copy(@"Resources\styles.css", documents + "styles.css");
             }
-            if(!File.Exists(documents + "script.js"))
+            if (!File.Exists(documents + "script.js"))
                 File.Copy(@"Resources\script.js", documents + "script.js");
             if (!File.Exists(documents + "styles.css"))
                 File.Copy(@"Resources\styles.css", documents + "styles.css");
+            if (!File.Exists(csvLog))
+                csvLog = documents + "ESD_LOG.csv";
+            if (!File.Exists(mdfFile))
+                mdfFile = @"C:\ZKTeco\ZKAccess3.5\access.mdb";
         }
 
         /// <summary>
@@ -139,7 +155,7 @@
         {
             int ret = 0;
             string str = "Cardno\tPin\tEventType\tInOutState\tTime_second";
-            int BUFFERSIZE = 1 * 1024 * 1024;
+            int BUFFERSIZE = 4 * 1024 * 1024;
             byte[] buffer = new byte[BUFFERSIZE];
             string options = "";
 
@@ -299,57 +315,75 @@
         {
             int nodays = DateTime.DaysInMonth(year, month);
             getUserNames();
-            try
+            Console.WriteLine("get user names success!");
+            String reportFile = documents + year + "_" + month + ".html";
+            if (!File.Exists(reportFile))
             {
-                StreamReader sr = new StreamReader(Properties.Settings.Default.LogPath);
-                StreamWriter sw = new StreamWriter(documents + year + "_" + month + ".html");
-
-                String page_start = "<!doctype html>\n <html lang = \"en\">\n<head><meta charset = \"utf-8\">\n" +
-                    "<title> ESD Table</title>\n" +
-                    "<meta name=\"description\"content=\"The HTML5 Herald\">\n" +
-                    "<meta name=\"author\"content=\"SitePoint\">\n" +
-                    "<link rel=\"stylesheet\" href=\"styles.css?v=1.0\"> </head><body>\n" +
-                    "<script src=\"script.js\"></script>\n"+
-                    "<h2>ESD tests for month: "+datePeack.Value.Month+"/"+datePeack.Value.Year+"</h2>";
-
-                sw.WriteLine(page_start);
-                String table = "<table id='tbMonth' border='1'>";
-                String[] headLine = sr.ReadLine().Split(',');
-                table += "<tr><th>ID</th> <th>User Name</th>";
-                for (int i = 1; i <= nodays; i++)
+                try
                 {
-                    table += "<th>" + i + "</th>";
-                }
+                    StreamReader sr = new StreamReader(csvLog);
+                    StreamWriter sw = new StreamWriter(reportFile);
 
-                table += "</tr>";
+                    String page_start = "<!doctype html>\n <html lang = \"en\">\n<head><meta charset = \"utf-8\">\n" +
+                        "<title> ESD Table</title>\n" +
+                        "<meta name=\"description\"content=\"The HTML5 Herald\">\n" +
+                        "<meta name=\"author\"content=\"SitePoint\">\n" +
+                        "<link rel=\"stylesheet\" href=\"styles.css?v=1.0\"> </head><body>\n" +
+                        "<script src=\"script.js\"></script>\n" +
+                        "<h2>ESD tests for month: <span id='date'>" + datePeack.Value.Month + "/" + datePeack.Value.Year + "</span></h2>";
 
-                var test = getUsersStats(year, month);
-                for (int i = 1; i < test.GetLength(0); i++)
-                {
-                    table += string.Format("<tr><td>{0}</td>", i);
-                    for (int j = 0; j < test.GetLength(1); j++)
+                    sw.WriteLine(page_start);
+                    String table = "<table id='tbMonth' border='1'>";
+                    String[] headLine = sr.ReadLine().Split(',');
+                    table += "<tr><th>ID</th> <th>User Name</th>";
+                    for (int i = 1; i <= nodays; i++)
                     {
-                        table += string.Format("<td>{0}</td>", test[i, j]);
+                        table += "<th>" + i + "</th>";
                     }
-                    table += "</tr>";
+
+                    table += "</tr>\n";
+
+                    var stats = getUsersStats(year, month);
+                    for (int i = 1; i < stats.GetLength(0); i++)
+                    {
+                        table += string.Format("<tr><td class='id'>{0}</td><td class='name'>{1}</td>", i, stats[i, 0]);
+                        for (int j = 1; j < stats.GetLength(1); j++)
+                        {
+                            table += string.Format("<td class='day'>{0}</td>", stats[i, j]);
+                        }
+                        table += "</tr>\n";
+                    }
+
+                    sw.WriteLine(table);
+
+                    String page_end = "</body></html>";
+                    sw.WriteLine(page_end);
+                    sr.Close();
+                    sw.Close();
+                    System.Diagnostics.Process.Start(reportFile);
+                    txbLog.Text += "Report created: " + documents + year + "_" + month + ".html" + Environment.NewLine;
                 }
-
-                sw.WriteLine(table);
-
-                String page_end = "</body></html>";
-                sw.WriteLine(page_end);
-                sr.Close();
-                sw.Close();
-                System.Diagnostics.Process.Start(documents);
-                txbLog.Text += "Report created: " + documents + year + "_" + month + ".html" + Environment.NewLine;
+                catch (FileNotFoundException ex)
+                {
+                    txbLog.Text += ex.Message + Environment.NewLine;
+                }
+                catch (Exception ex)
+                {
+                    txbLog.Text += ex.Message + Environment.NewLine;
+                }
             }
-            catch (FileNotFoundException ex)
+            else
             {
-                txbLog.Text += ex.Message + Environment.NewLine;
-            }
-            catch (Exception ex)
-            {
-                txbLog.Text += ex.Message + Environment.NewLine;
+                DialogResult dialogResult = MessageBox.Show("Report for this month exists! Open exists file?", "Report exists!", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    System.Diagnostics.Process.Start(reportFile);
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    File.Delete(reportFile);
+                    buildHTML(year, month);
+                }
             }
         }
 
@@ -358,11 +392,6 @@
         /// </summary>
         private void getUserNames()
         {
-            string mdfFile = Properties.Settings.Default.dbPath;
-            if (!File.Exists(mdfFile))
-            {
-                mdfFile = @"C:\ZKTeco\ZKAccess3.5\access.mdb";
-            }
             using (OleDbConnection connection = new OleDbConnection(string.Format("Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}", mdfFile)))
             {
                 using (OleDbCommand selectCommand = new OleDbCommand("SELECT * FROM USERINFO", connection))
@@ -392,12 +421,16 @@
             }
         }
 
+        /// <summary>
+        /// The getUsersStats
+        /// </summary>
+        /// <param name="year">The year<see cref="int"/></param>
+        /// <param name="month">The month<see cref="int"/></param>
+        /// <returns>The <see cref="String[,]"/></returns>
         private String[,] getUsersStats(int year, int month)
         {
             int monthDays = DateTime.DaysInMonth(year, month);
-            String[,] monthStats = new string[users.Count+1, monthDays+1];
-
-            
+            String[,] monthStats = new string[users.Count + 1, monthDays + 1];
 
             if (File.Exists(csvLog))
             {
@@ -406,12 +439,12 @@
                     StreamReader sr = new StreamReader(csvLog);
                     String[] tmp = sr.ReadLine().Split(',');
                     monthStats[user.Key, 0] = user.Value;
-                    for(int i = 0; i < monthDays; i++)
+                    for (int i = 0; i < monthDays; i++)
                     {
-                        while(sr.Peek() > 0)
+                        while (sr.Peek() > 0)
                         {
                             tmp = sr.ReadLine().Split(',');
-                            if(Int16.Parse(tmp[7]) == month && Int16.Parse(tmp[8]) == year && user.Value.Equals(tmp[0]))
+                            if (Int16.Parse(tmp[7]) == month && Int16.Parse(tmp[8]) == year && user.Value.Equals(tmp[0]))
                             {
                                 monthStats[user.Key, Int16.Parse(tmp[6])] = " V ";
                             }
@@ -423,7 +456,7 @@
             }
             else
             {
-                txbLog.Text += csvLog+" not found" + Environment.NewLine;
+                txbLog.Text += csvLog + " not found" + Environment.NewLine;
             }
             return monthStats;
         }
@@ -492,6 +525,11 @@
         {
             Cursor = Cursors.Default;
             pbCalendar.BackColor = Color.Transparent;
+        }
+
+        private void lblAbout_Click_1(object sender, EventArgs e)
+        {
+            MessageBox.Show("Created by Chaim Gorbov for Avdor-HELET", "About C3-200 Logger", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

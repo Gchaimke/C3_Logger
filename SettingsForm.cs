@@ -1,19 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace C3_Logger
+﻿namespace C3_Logger
 {
+    using System;
+    using System.Security;
+    using System.Windows.Forms;
+
+    /// <summary>
+    /// Defines the <see cref="SettingsForm" />
+    /// </summary>
     public partial class SettingsForm : Form
     {
+        /// <summary>
+        /// Defines the openFileDialog1
+        /// </summary>
         private OpenFileDialog openFileDialog1;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SettingsForm"/> class.
+        /// </summary>
         public SettingsForm()
         {
             InitializeComponent();
@@ -28,9 +31,13 @@ namespace C3_Logger
             txbIp.Text = Properties.Settings.Default.IP;
             txbPort.Text = Properties.Settings.Default.Port;
             txbPass.Text = Properties.Settings.Default.Pass;
-
         }
 
+        /// <summary>
+        /// The btnSelectDB_Click
+        /// </summary>
+        /// <param name="sender">The sender<see cref="object"/></param>
+        /// <param name="e">The e<see cref="EventArgs"/></param>
         private void btnSelectDB_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -46,6 +53,12 @@ namespace C3_Logger
                 }
             }
         }
+
+        /// <summary>
+        /// The btnSelectLog_Click
+        /// </summary>
+        /// <param name="sender">The sender<see cref="object"/></param>
+        /// <param name="e">The e<see cref="EventArgs"/></param>
         private void btnSelectLog_Click(object sender, EventArgs e)
         {
             openFileDialog1.Title = "Select a Log file";
@@ -65,6 +78,11 @@ namespace C3_Logger
             }
         }
 
+        /// <summary>
+        /// The btnSave_Click
+        /// </summary>
+        /// <param name="sender">The sender<see cref="object"/></param>
+        /// <param name="e">The e<see cref="EventArgs"/></param>
         private void btnSave_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.dbPath = txbDBPath.Text;
@@ -76,11 +94,14 @@ namespace C3_Logger
             this.Close();
         }
 
+        /// <summary>
+        /// The btnCancel_Click
+        /// </summary>
+        /// <param name="sender">The sender<see cref="object"/></param>
+        /// <param name="e">The e<see cref="EventArgs"/></param>
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-
-        
     }
 }

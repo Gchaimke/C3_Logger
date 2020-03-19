@@ -3,8 +3,32 @@ body {
     padding: 0;
 }
 
+h2 {
+    text-align: center;
+}
+
+table#tbMonth {
+    margin: auto;
+}
+
 th {
     background:aliceblue;
+}
+
+td.id {
+    width: 30px;
+    text-align: center;
+}
+
+td.name {
+    padding-left: 10px;
+    min-width: 100px;
+    max-width: fit-content;
+}
+
+td.day {
+    text-align: center;
+    width: 25px;
 }
 
 tr:nth-child(even) {background: #CCC}
