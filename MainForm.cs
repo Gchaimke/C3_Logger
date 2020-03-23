@@ -422,7 +422,7 @@
             }
             else
             {
-                DialogResult dialogResult = MessageBox.Show("Delete previos, and create new?", "Report exists!", MessageBoxButtons.YesNo);
+                DialogResult dialogResult = MessageBox.Show("delete previous, and create new?", "Report exists!", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.No)
                 {
                     System.Diagnostics.Process.Start(reportFile);
