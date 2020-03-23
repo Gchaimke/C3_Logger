@@ -71,10 +71,9 @@
                 File.Copy(@"Resources\script.js", documents + "script.js");
             if (!File.Exists(documents + "styles.css"))
                 File.Copy(@"Resources\styles.css", documents + "styles.css");
+            csvLog = Properties.Settings.Default.LogPath;
             if (!File.Exists(csvLog))
                 csvLog = documents + "ESD_LOG.csv";
-            if (!File.Exists(mdfFile))
-                mdfFile = @"C:\ZKTeco\ZKAccess3.5\access.mdb";
         }
 
         /// <summary>
@@ -116,9 +115,8 @@
         /// <summary>
         /// The btnConnect_Click
         /// </summary>
-        /// <param name="sender">The sender<see cref="object"/></param>
-        /// <param name="e">The e<see cref="EventArgs"/></param>
-        private void btnConnect_Click(object sender, EventArgs e)
+        /// <returns>The <see cref="bool"/></returns>
+        private bool connect()
         {
             Cursor = Cursors.WaitCursor;
             string str = "";
@@ -131,21 +129,23 @@
 
                 if (h != IntPtr.Zero)
                 {
-                    btnConnect.Enabled = false;
+                    pbCalendar.Enabled = false;
                     txbLog.Text += "Connected!" + Environment.NewLine;
                     getLog();
                     Disconnect(h);
                     h = IntPtr.Zero;
                     txbLog.Text += "Disconnected!" + Environment.NewLine;
-                    btnConnect.Enabled = true;
-                    System.Diagnostics.Process.Start(documents);
+                    pbCalendar.Enabled = true;
+                    return true;
                 }
                 else
                 {
-                    txbLog.Text += "Connection error! Cant conncet to address " + Properties.Settings.Default.IP + ":" + Properties.Settings.Default.Port + Environment.NewLine;
+                    txbLog.Text += "Connection error! Can't connect to address " + Properties.Settings.Default.IP + ":" + Properties.Settings.Default.Port + Environment.NewLine;
                 }
                 Cursor = Cursors.Default;
+
             }
+            return false;
         }
 
         /// <summary>
@@ -180,7 +180,7 @@
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception: " + ex.Message);
+                    Console.WriteLine("Get Log error: " + ex.Message);
                     txbLog.Text += ex.Message + Environment.NewLine;
                 }
                 saveLog();
@@ -236,6 +236,50 @@
         }
 
         /// <summary>
+        /// The getUserNames
+        /// </summary>
+        private void getUserNames()
+        {
+            mdfFile = Properties.Settings.Default.dbPath;
+            if (!File.Exists(mdfFile))
+                mdfFile = @"C:\ZKTeco\ZKAccess3.5\access.mdb";
+            if (!File.Exists(mdfFile))
+            {
+                txbLog.Text += "Can't connect to DB: " + mdfFile + Environment.NewLine;
+                return;
+            }
+            txbLog.Text += "Get DB " + mdfFile + Environment.NewLine;
+            using (OleDbConnection connection = new OleDbConnection(string.Format("Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}", mdfFile)))
+            {
+                using (OleDbCommand selectCommand = new OleDbCommand("SELECT * FROM USERINFO", connection))
+                {
+                    connection.Open();
+
+                    DataTable table = new DataTable();
+                    OleDbDataAdapter adapter = new OleDbDataAdapter();
+                    adapter.SelectCommand = selectCommand;
+                    adapter.Fill(table);
+
+                    foreach (DataRow row in table.Rows)
+                    {
+                        object nameValue = row["NAME"];
+                        object userNum = row["Badgenumber"];
+                        try
+                        {
+                            users.Add(Int16.Parse(userNum.ToString()), nameValue.ToString());
+                        }
+                        catch (ArgumentException)
+                        {
+
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+        /// <summary>
         /// The saveLog
         /// </summary>
         private void saveLog()
@@ -246,41 +290,45 @@
             }
             catch (Exception ex)
             {
-                txbLog.Text += ex.Message + Environment.NewLine;
+                txbLog.Text += "Save log error! Can't get user names" + ex.Message + Environment.NewLine;
+                return;
             }
 
 
             StreamReader sr = new StreamReader(rowLog);
             try
             {
-
                 StreamWriter sw = new StreamWriter(csvLog);
                 sw.WriteLine("Name," + sr.ReadLine() + ",Day,Month,Year");
-                while (sr.Peek() > 0)
+                if (users.Count <= 0)
                 {
-                    String[] arr = sr.ReadLine().Split(',');
-                    String[] date = formatLog(arr[4]);
-                    String line = "";
-                    if (users.Count > 0)
-                    {
-                        line = users[Int16.Parse(arr[1])] + "," + arr[0] + "," + arr[1] + "," + arr[2] + ",PASSED," + date[0] + "," + date[1] + "," + date[2] + "," + date[3];
-                    }
-                    else
-                    {
-                        txbLog.Text += "Fale with names not found, printing user number" + Environment.NewLine;
-                        line = arr[0] + "," + arr[1] + "," + arr[2] + ",PASSED," + date[0] + "," + date[1] + "," + date[2] + "," + date[3];
-                    }
-                    sw.WriteLine(line);
+                    txbLog.Text += "User list i empty!" + Environment.NewLine;
+                    sw.Close();
+                    sr.Close();
+                    delRow();
+                    return;
                 }
-                sw.Close();
-                txbLog.Text += "Log created: " + csvLog + Environment.NewLine;
+                else
+                {
+                    while (sr.Peek() > 0)
+                    {
+                        String[] arr = sr.ReadLine().Split(',');
+                        String[] date = formatLog(arr[4]);
+                        String line = "";
+                        line = users[Int16.Parse(arr[1])] + "," + arr[0] + "," + arr[1] + "," + arr[2] + ",PASSED," + date[0] + "," + date[1] + "," + date[2] + "," + date[3];
+                        sw.WriteLine(line);
+                    }
+
+                    txbLog.Text += "Log created: " + csvLog + Environment.NewLine;
+                    sw.Close();
+                    sr.Close();
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception: " + ex.Message);
+                Console.WriteLine("Save Log Exception: " + ex.Message);
                 txbLog.Text += ex.Message + Environment.NewLine;
             }
-            sr.Close();
             delRow();
         }
 
@@ -314,9 +362,9 @@
         private void buildHTML(int year, int month)
         {
             int nodays = DateTime.DaysInMonth(year, month);
-            getUserNames();
-            Console.WriteLine("get user names success!");
             String reportFile = documents + year + "_" + month + ".html";
+            if (users.Count <= 0)
+                return;
             if (!File.Exists(reportFile))
             {
                 try
@@ -365,60 +413,27 @@
                 }
                 catch (FileNotFoundException ex)
                 {
-                    txbLog.Text += ex.Message + Environment.NewLine;
+                    txbLog.Text += "Build HTML Error: " + ex.Message + Environment.NewLine;
                 }
                 catch (Exception ex)
                 {
-                    txbLog.Text += ex.Message + Environment.NewLine;
+                    txbLog.Text += "Build HTML Error: " + ex.Message + Environment.NewLine;
                 }
             }
             else
             {
-                DialogResult dialogResult = MessageBox.Show("Report for this month exists! Open exists file?", "Report exists!", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
+                DialogResult dialogResult = MessageBox.Show("Delete previos, and create new?", "Report exists!", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.No)
                 {
                     System.Diagnostics.Process.Start(reportFile);
                 }
-                else if (dialogResult == DialogResult.No)
+                else if (dialogResult == DialogResult.Yes)
                 {
                     File.Delete(reportFile);
                     buildHTML(year, month);
                 }
             }
-        }
-
-        /// <summary>
-        /// The getUserNames
-        /// </summary>
-        private void getUserNames()
-        {
-            using (OleDbConnection connection = new OleDbConnection(string.Format("Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}", mdfFile)))
-            {
-                using (OleDbCommand selectCommand = new OleDbCommand("SELECT * FROM USERINFO", connection))
-                {
-                    connection.Open();
-
-                    DataTable table = new DataTable();
-                    OleDbDataAdapter adapter = new OleDbDataAdapter();
-                    adapter.SelectCommand = selectCommand;
-                    adapter.Fill(table);
-
-                    foreach (DataRow row in table.Rows)
-                    {
-                        object nameValue = row["NAME"];
-                        object userNum = row["Badgenumber"];
-                        try
-                        {
-                            users.Add(Int16.Parse(userNum.ToString()), nameValue.ToString());
-                        }
-                        catch (ArgumentException)
-                        {
-
-                        }
-
-                    }
-                }
-            }
+            System.Diagnostics.Process.Start(documents);
         }
 
         /// <summary>
@@ -501,8 +516,10 @@
         /// <param name="e">The e<see cref="EventArgs"/></param>
         private void pbCalendar_Click(object sender, EventArgs e)
         {
-
-            buildHTML(datePeack.Value.Year, datePeack.Value.Month);
+            if (connect())
+            {
+                buildHTML(datePeack.Value.Year, datePeack.Value.Month);
+            }
         }
 
         /// <summary>
@@ -527,6 +544,11 @@
             pbCalendar.BackColor = Color.Transparent;
         }
 
+        /// <summary>
+        /// The lblAbout_Click_1
+        /// </summary>
+        /// <param name="sender">The sender<see cref="object"/></param>
+        /// <param name="e">The e<see cref="EventArgs"/></param>
         private void lblAbout_Click_1(object sender, EventArgs e)
         {
             MessageBox.Show("Created by Chaim Gorbov for Avdor-HELET", "About C3-200 Logger", MessageBoxButtons.OK, MessageBoxIcon.Information);

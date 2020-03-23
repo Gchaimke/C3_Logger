@@ -92,6 +92,7 @@
             Properties.Settings.Default.LogPath = txbLog.Text;
             Properties.Settings.Default.Save();
             this.Close();
+
         }
 
         /// <summary>

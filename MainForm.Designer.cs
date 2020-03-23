@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnConnect = new System.Windows.Forms.Button();
             this.txbLog = new System.Windows.Forms.TextBox();
             this.pbCalendar = new System.Windows.Forms.PictureBox();
             this.pbSettings = new System.Windows.Forms.PictureBox();
@@ -37,19 +36,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbCalendar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSettings)).BeginInit();
             this.SuspendLayout();
-            // 
-            // btnConnect
-            // 
-            this.btnConnect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnConnect.Location = new System.Drawing.Point(13, 12);
-            this.btnConnect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(87, 72);
-            this.btnConnect.TabIndex = 1;
-            this.btnConnect.Text = "Get Log";
-            this.btnConnect.UseVisualStyleBackColor = true;
-            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
             // txbLog
             // 
@@ -61,13 +47,13 @@
             this.txbLog.Name = "txbLog";
             this.txbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txbLog.Size = new System.Drawing.Size(481, 182);
-            this.txbLog.TabIndex = 2;
+            this.txbLog.TabIndex = 6;
             // 
             // pbCalendar
             // 
             this.pbCalendar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pbCalendar.Image = global::C3_Logger.Properties.Resources.calendar;
-            this.pbCalendar.Location = new System.Drawing.Point(309, 12);
+            this.pbCalendar.Location = new System.Drawing.Point(13, 10);
             this.pbCalendar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbCalendar.Name = "pbCalendar";
             this.pbCalendar.Size = new System.Drawing.Size(86, 72);
@@ -97,10 +83,10 @@
             // datePeack
             // 
             this.datePeack.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.datePeack.Location = new System.Drawing.Point(187, 12);
+            this.datePeack.Location = new System.Drawing.Point(106, 10);
             this.datePeack.Name = "datePeack";
             this.datePeack.Size = new System.Drawing.Size(115, 21);
-            this.datePeack.TabIndex = 6;
+            this.datePeack.TabIndex = 1;
             this.datePeack.Value = new System.DateTime(2020, 3, 18, 12, 30, 48, 0);
             // 
             // lblAbout
@@ -110,7 +96,7 @@
             this.lblAbout.Location = new System.Drawing.Point(434, 67);
             this.lblAbout.Name = "lblAbout";
             this.lblAbout.Size = new System.Drawing.Size(27, 15);
-            this.lblAbout.TabIndex = 7;
+            this.lblAbout.TabIndex = 4;
             this.lblAbout.Text = "info";
             this.lblAbout.Click += new System.EventHandler(this.lblAbout_Click_1);
             // 
@@ -124,7 +110,6 @@
             this.Controls.Add(this.pbCalendar);
             this.Controls.Add(this.pbSettings);
             this.Controls.Add(this.txbLog);
-            this.Controls.Add(this.btnConnect);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -138,7 +123,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.TextBox txbLog;
         private System.Windows.Forms.PictureBox pbSettings;
         private System.Windows.Forms.PictureBox pbCalendar;
