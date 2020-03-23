@@ -4,54 +4,53 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Data.OleDb;
-    using System.Drawing;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Windows.Forms;
 
     /// <summary>
-    /// Defines the <see cref="MainForm" />
+    /// Defines the <see cref="MainForm" />.
     /// </summary>
     public partial class MainForm : Form
     {
         /// <summary>
-        /// Defines the settingsForm
+        /// Defines the settingsForm.
         /// </summary>
         private SettingsForm settingsForm;
 
         /// <summary>
-        /// Defines the documents
+        /// Defines the documents.
         /// </summary>
         internal String documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ESD_LOGS\\";
 
         /// <summary>
-        /// Defines the rowLog
+        /// Defines the rowLog.
         /// </summary>
         internal String rowLog = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ESD_LOGS\\ESD_LOG.ROW";
 
         /// <summary>
-        /// Defines the csvLog
+        /// Defines the csvLog.
         /// </summary>
         internal String csvLog = Properties.Settings.Default.LogPath;
 
         /// <summary>
-        /// Defines the mdfFile
+        /// Defines the mdfFile.
         /// </summary>
         internal String mdfFile = Properties.Settings.Default.dbPath;
 
         /// <summary>
-        /// Defines the strcount
+        /// Defines the strcount.
         /// </summary>
         internal string strcount = "";
 
         /// <summary>
-        /// Defines the h
+        /// Defines the h.
         /// </summary>
         internal IntPtr h = IntPtr.Zero;
 
         /// <summary>
-        /// Defines the users
+        /// Defines the users.
         /// </summary>
         internal Dictionary<int, String> users = new Dictionary<int, String>();
 
@@ -77,45 +76,45 @@
         }
 
         /// <summary>
-        /// The Connect
+        /// The Connect.
         /// </summary>
-        /// <param name="Parameters">The Parameters<see cref="string"/></param>
-        /// <returns>The <see cref="IntPtr"/></returns>
+        /// <param name="Parameters">The Parameters<see cref="string"/>.</param>
+        /// <returns>The <see cref="IntPtr"/>.</returns>
         [DllImport(@"lib\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
 
         /// <summary>
-        /// The PullLastError
+        /// The PullLastError.
         /// </summary>
-        /// <returns>The <see cref="int"/></returns>
+        /// <returns>The <see cref="int"/>.</returns>
         [DllImport(@"lib\plcommpro.dll", EntryPoint = "PullLastError")]
         public static extern int PullLastError();
 
         /// <summary>
-        /// The Disconnect
+        /// The Disconnect.
         /// </summary>
-        /// <param name="h">The h<see cref="IntPtr"/></param>
+        /// <param name="h">The h<see cref="IntPtr"/>.</param>
         [DllImport(@"lib\plcommpro.dll", EntryPoint = "Disconnect")]
         public static extern void Disconnect(IntPtr h);
 
         /// <summary>
-        /// The GetDeviceData
+        /// The GetDeviceData.
         /// </summary>
-        /// <param name="h">The h<see cref="IntPtr"/></param>
-        /// <param name="buffer">The buffer<see cref="byte"/></param>
-        /// <param name="buffersize">The buffersize<see cref="int"/></param>
-        /// <param name="tablename">The tablename<see cref="string"/></param>
-        /// <param name="filename">The filename<see cref="string"/></param>
-        /// <param name="filter">The filter<see cref="string"/></param>
-        /// <param name="options">The options<see cref="string"/></param>
-        /// <returns>The <see cref="int"/></returns>
+        /// <param name="h">The h<see cref="IntPtr"/>.</param>
+        /// <param name="buffer">The buffer<see cref="byte"/>.</param>
+        /// <param name="buffersize">The buffersize<see cref="int"/>.</param>
+        /// <param name="tablename">The tablename<see cref="string"/>.</param>
+        /// <param name="filename">The filename<see cref="string"/>.</param>
+        /// <param name="filter">The filter<see cref="string"/>.</param>
+        /// <param name="options">The options<see cref="string"/>.</param>
+        /// <returns>The <see cref="int"/>.</returns>
         [DllImport(@"lib\plcommpro.dll", EntryPoint = "GetDeviceData")]
         public static extern int GetDeviceData(IntPtr h, ref byte buffer, int buffersize, string tablename, string filename, string filter, string options);
 
         /// <summary>
-        /// The btnConnect_Click
+        /// The btnConnect_Click.
         /// </summary>
-        /// <returns>The <see cref="bool"/></returns>
+        /// <returns>The <see cref="bool"/>.</returns>
         private bool connect()
         {
             Cursor = Cursors.WaitCursor;
@@ -129,13 +128,12 @@
 
                 if (h != IntPtr.Zero)
                 {
-                    pbCalendar.Enabled = false;
                     txbLog.Text += "Connected!" + Environment.NewLine;
                     getLog();
                     Disconnect(h);
                     h = IntPtr.Zero;
                     txbLog.Text += "Disconnected!" + Environment.NewLine;
-                    pbCalendar.Enabled = true;
+                    Cursor = Cursors.Default;
                     return true;
                 }
                 else
@@ -149,7 +147,7 @@
         }
 
         /// <summary>
-        /// The getLog
+        /// The getLog.
         /// </summary>
         private void getLog()
         {
@@ -194,10 +192,10 @@
         }
 
         /// <summary>
-        /// The formatLog
+        /// The formatLog.
         /// </summary>
-        /// <param name="rowTime">The rowTime<see cref="String"/></param>
-        /// <returns>The <see cref="String[]"/></returns>
+        /// <param name="rowTime">The rowTime<see cref="String"/>.</param>
+        /// <returns>The <see cref="String[]"/>.</returns>
         private String[] formatLog(String rowTime)
         {
             int second, minute, hour;
@@ -236,7 +234,7 @@
         }
 
         /// <summary>
-        /// The getUserNames
+        /// The getUserNames.
         /// </summary>
         private void getUserNames()
         {
@@ -280,7 +278,7 @@
         }
 
         /// <summary>
-        /// The saveLog
+        /// The saveLog.
         /// </summary>
         private void saveLog()
         {
@@ -333,7 +331,7 @@
         }
 
         /// <summary>
-        /// The delRow
+        /// The delRow.
         /// </summary>
         private void delRow()
         {
@@ -355,10 +353,10 @@
         }
 
         /// <summary>
-        /// The buildHTML
+        /// The buildHTML.
         /// </summary>
-        /// <param name="year">The year<see cref="int"/></param>
-        /// <param name="month">The month<see cref="int"/></param>
+        /// <param name="year">The year<see cref="int"/>.</param>
+        /// <param name="month">The month<see cref="int"/>.</param>
         private void buildHTML(int year, int month)
         {
             int nodays = DateTime.DaysInMonth(year, month);
@@ -437,11 +435,11 @@
         }
 
         /// <summary>
-        /// The getUsersStats
+        /// The getUsersStats.
         /// </summary>
-        /// <param name="year">The year<see cref="int"/></param>
-        /// <param name="month">The month<see cref="int"/></param>
-        /// <returns>The <see cref="String[,]"/></returns>
+        /// <param name="year">The year<see cref="int"/>.</param>
+        /// <param name="month">The month<see cref="int"/>.</param>
+        /// <returns>The <see cref="String[,]"/>.</returns>
         private String[,] getUsersStats(int year, int month)
         {
             int monthDays = DateTime.DaysInMonth(year, month);
@@ -477,44 +475,21 @@
         }
 
         /// <summary>
-        /// The pbSettings_MouseHover
+        /// The lblAbout_Click.
         /// </summary>
-        /// <param name="sender">The sender<see cref="object"/></param>
-        /// <param name="e">The e<see cref="EventArgs"/></param>
-        private void pbSettings_MouseHover(object sender, EventArgs e)
+        /// <param name="sender">The sender<see cref="object"/>.</param>
+        /// <param name="e">The e<see cref="EventArgs"/>.</param>
+        private void lblAbout_Click(object sender, EventArgs e)
         {
-            Cursor = Cursors.Hand;
-            pbSettings.BackColor = Color.Gray;
+            MessageBox.Show("Created by Chaim Gorbov for Avdor-HELET", "About C3-200 Logger", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
-        /// The pbSettings_MouseLeave
+        /// The btnGetLog_Click.
         /// </summary>
-        /// <param name="sender">The sender<see cref="object"/></param>
-        /// <param name="e">The e<see cref="EventArgs"/></param>
-        private void pbSettings_MouseLeave(object sender, EventArgs e)
-        {
-            Cursor = Cursors.Default;
-            pbSettings.BackColor = Color.Transparent;
-        }
-
-        /// <summary>
-        /// The pbSettings_Click
-        /// </summary>
-        /// <param name="sender">The sender<see cref="object"/></param>
-        /// <param name="e">The e<see cref="EventArgs"/></param>
-        private void pbSettings_Click(object sender, EventArgs e)
-        {
-            settingsForm = new SettingsForm();
-            settingsForm.Show();
-        }
-
-        /// <summary>
-        /// The pbCalendar_Click
-        /// </summary>
-        /// <param name="sender">The sender<see cref="object"/></param>
-        /// <param name="e">The e<see cref="EventArgs"/></param>
-        private void pbCalendar_Click(object sender, EventArgs e)
+        /// <param name="sender">The sender<see cref="object"/>.</param>
+        /// <param name="e">The e<see cref="EventArgs"/>.</param>
+        private void btnGetLog_Click(object sender, EventArgs e)
         {
             if (connect())
             {
@@ -523,35 +498,14 @@
         }
 
         /// <summary>
-        /// The pbCalendar_MouseHover
+        /// The btnSettings_Click.
         /// </summary>
-        /// <param name="sender">The sender<see cref="object"/></param>
-        /// <param name="e">The e<see cref="EventArgs"/></param>
-        private void pbCalendar_MouseHover(object sender, EventArgs e)
+        /// <param name="sender">The sender<see cref="object"/>.</param>
+        /// <param name="e">The e<see cref="EventArgs"/>.</param>
+        private void btnSettings_Click(object sender, EventArgs e)
         {
-            Cursor = Cursors.Hand;
-            pbCalendar.BackColor = Color.Gray;
-        }
-
-        /// <summary>
-        /// The pbCalendar_MouseLeave
-        /// </summary>
-        /// <param name="sender">The sender<see cref="object"/></param>
-        /// <param name="e">The e<see cref="EventArgs"/></param>
-        private void pbCalendar_MouseLeave(object sender, EventArgs e)
-        {
-            Cursor = Cursors.Default;
-            pbCalendar.BackColor = Color.Transparent;
-        }
-
-        /// <summary>
-        /// The lblAbout_Click_1
-        /// </summary>
-        /// <param name="sender">The sender<see cref="object"/></param>
-        /// <param name="e">The e<see cref="EventArgs"/></param>
-        private void lblAbout_Click_1(object sender, EventArgs e)
-        {
-            MessageBox.Show("Created by Chaim Gorbov for Avdor-HELET", "About C3-200 Logger", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            settingsForm = new SettingsForm();
+            settingsForm.Show();
         }
     }
 }
