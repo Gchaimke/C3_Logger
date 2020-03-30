@@ -4,7 +4,9 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Data.OleDb;
+    using System.Deployment.Application;
     using System.IO;
+    using System.Reflection;
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Windows.Forms;
@@ -73,6 +75,7 @@
             csvLog = Properties.Settings.Default.LogPath;
             if (!File.Exists(csvLog))
                 csvLog = documents + "ESD_LOG.csv";
+            datePeack.Value = DateTime.Now;
         }
 
         /// <summary>
@@ -363,75 +366,59 @@
             String reportFile = documents + year + "_" + month + ".html";
             if (users.Count <= 0)
                 return;
-            if (!File.Exists(reportFile))
+            try
             {
-                try
+                StreamReader sr = new StreamReader(csvLog);
+                StreamWriter sw = new StreamWriter(reportFile);
+
+                String page_start = "<!doctype html>\n <html lang = \"en\">\n<head><meta charset = \"utf-8\">\n" +
+                    "<title> ESD Table</title>\n" +
+                    "<meta name=\"description\"content=\"The HTML5 Herald\">\n" +
+                    "<meta name=\"author\"content=\"SitePoint\">\n" +
+                    "<link rel=\"stylesheet\" href=\"styles.css?v=1.0\"> </head><body>\n" +
+                    "<script src=\"script.js\"></script>\n" +
+                    "<h2>ESD tests for month: <span id='date'>" + datePeack.Value.Month + "/" + datePeack.Value.Year + "</span></h2>";
+
+                sw.WriteLine(page_start);
+                String table = "<table id='tbMonth' border='1'>";
+                String[] headLine = sr.ReadLine().Split(',');
+                table += "<tr><th>ID</th> <th>User Name</th>";
+                for (int i = 1; i <= nodays; i++)
                 {
-                    StreamReader sr = new StreamReader(csvLog);
-                    StreamWriter sw = new StreamWriter(reportFile);
+                    table += "<th>" + i + "</th>";
+                }
 
-                    String page_start = "<!doctype html>\n <html lang = \"en\">\n<head><meta charset = \"utf-8\">\n" +
-                        "<title> ESD Table</title>\n" +
-                        "<meta name=\"description\"content=\"The HTML5 Herald\">\n" +
-                        "<meta name=\"author\"content=\"SitePoint\">\n" +
-                        "<link rel=\"stylesheet\" href=\"styles.css?v=1.0\"> </head><body>\n" +
-                        "<script src=\"script.js\"></script>\n" +
-                        "<h2>ESD tests for month: <span id='date'>" + datePeack.Value.Month + "/" + datePeack.Value.Year + "</span></h2>";
+                table += "</tr>\n";
 
-                    sw.WriteLine(page_start);
-                    String table = "<table id='tbMonth' border='1'>";
-                    String[] headLine = sr.ReadLine().Split(',');
-                    table += "<tr><th>ID</th> <th>User Name</th>";
-                    for (int i = 1; i <= nodays; i++)
+                var stats = getUsersStats(year, month);
+                for (int i = 1; i < stats.GetLength(0); i++)
+                {
+                    table += string.Format("<tr><td class='id'>{0}</td><td class='name'>{1}</td>", i, stats[i, 0]);
+                    for (int j = 1; j < stats.GetLength(1); j++)
                     {
-                        table += "<th>" + i + "</th>";
+                        table += string.Format("<td class='day'>{0}</td>", stats[i, j]);
                     }
-
                     table += "</tr>\n";
-
-                    var stats = getUsersStats(year, month);
-                    for (int i = 1; i < stats.GetLength(0); i++)
-                    {
-                        table += string.Format("<tr><td class='id'>{0}</td><td class='name'>{1}</td>", i, stats[i, 0]);
-                        for (int j = 1; j < stats.GetLength(1); j++)
-                        {
-                            table += string.Format("<td class='day'>{0}</td>", stats[i, j]);
-                        }
-                        table += "</tr>\n";
-                    }
-
-                    sw.WriteLine(table);
-
-                    String page_end = "</body></html>";
-                    sw.WriteLine(page_end);
-                    sr.Close();
-                    sw.Close();
-                    System.Diagnostics.Process.Start(reportFile);
-                    txbLog.Text += "Report created: " + documents + year + "_" + month + ".html" + Environment.NewLine;
                 }
-                catch (FileNotFoundException ex)
-                {
-                    txbLog.Text += "Build HTML Error: " + ex.Message + Environment.NewLine;
-                }
-                catch (Exception ex)
-                {
-                    txbLog.Text += "Build HTML Error: " + ex.Message + Environment.NewLine;
-                }
+
+                sw.WriteLine(table);
+
+                String page_end = "</body></html>";
+                sw.WriteLine(page_end);
+                sr.Close();
+                sw.Close();
+                System.Diagnostics.Process.Start(documents);
+                System.Diagnostics.Process.Start(reportFile);
+                txbLog.Text += "Report created: " + documents + year + "_" + month + ".html" + Environment.NewLine;
             }
-            else
+            catch (FileNotFoundException ex)
             {
-                DialogResult dialogResult = MessageBox.Show("delete previous, and create new?", "Report exists!", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.No)
-                {
-                    System.Diagnostics.Process.Start(reportFile);
-                }
-                else if (dialogResult == DialogResult.Yes)
-                {
-                    File.Delete(reportFile);
-                    buildHTML(year, month);
-                }
+                txbLog.Text += "Build HTML Error: " + ex.Message + Environment.NewLine;
             }
-            System.Diagnostics.Process.Start(documents);
+            catch (Exception ex)
+            {
+                txbLog.Text += "Build HTML Error: " + ex.Message + Environment.NewLine;
+            }
         }
 
         /// <summary>
@@ -481,7 +468,17 @@
         /// <param name="e">The e<see cref="EventArgs"/>.</param>
         private void lblAbout_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Created by Chaim Gorbov for Avdor-HELET", "About C3-200 Logger", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Created by Chaim Gorbov for Avdor-HELET \nProgram Version: "+CurrentVersion, "About C3-200 Logger", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        public string CurrentVersion
+        {
+            get
+            {
+                return ApplicationDeployment.IsNetworkDeployed
+                       ? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString()
+                       : Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
         }
 
         /// <summary>
@@ -491,6 +488,13 @@
         /// <param name="e">The e<see cref="EventArgs"/>.</param>
         private void btnGetLog_Click(object sender, EventArgs e)
         {
+            if (!Directory.Exists(documents))
+            {
+                Directory.CreateDirectory(documents);
+                File.Copy(@"Resources\script.js", documents + "script.js");
+                File.Copy(@"Resources\styles.css", documents + "styles.css");
+            }
+
             if (connect())
             {
                 buildHTML(datePeack.Value.Year, datePeack.Value.Month);
