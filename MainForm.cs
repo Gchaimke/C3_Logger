@@ -11,54 +11,16 @@
     using System.Text;
     using System.Windows.Forms;
 
-    /// <summary>
-    /// Defines the <see cref="MainForm" />.
-    /// </summary>
     public partial class MainForm : Form
     {
-        /// <summary>
-        /// Defines the settingsForm.
-        /// </summary>
         private SettingsForm settingsForm;
-
-        /// <summary>
-        /// Defines the documents.
-        /// </summary>
         internal String documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ESD_LOGS\\";
-
-        /// <summary>
-        /// Defines the rowLog.
-        /// </summary>
         internal String rowLog = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ESD_LOGS\\ESD_LOG.ROW";
-
-        /// <summary>
-        /// Defines the csvLog.
-        /// </summary>
         internal String csvLog = Properties.Settings.Default.LogPath;
-
-        /// <summary>
-        /// Defines the mdfFile.
-        /// </summary>
         internal String mdfFile = Properties.Settings.Default.dbPath;
-
-        /// <summary>
-        /// Defines the strcount.
-        /// </summary>
         internal string strcount = "";
-
-        /// <summary>
-        /// Defines the h.
-        /// </summary>
         internal IntPtr h = IntPtr.Zero;
-
-        /// <summary>
-        /// Defines the users.
-        /// </summary>
         internal Dictionary<int, String> users = new Dictionary<int, String>();
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainForm"/> class.
-        /// </summary>
         public MainForm()
         {
             InitializeComponent();
@@ -149,9 +111,6 @@
             return false;
         }
 
-        /// <summary>
-        /// The getLog.
-        /// </summary>
         private void getLog()
         {
             int ret = 0;
@@ -184,6 +143,7 @@
                     Console.WriteLine("Get Log error: " + ex.Message);
                     txbLog.Text += ex.Message + Environment.NewLine;
                 }
+                txbLog.Text += "Start Save log " + Environment.NewLine;
                 saveLog();
                 txbLog.Text += "Get " + ret + " records" + Environment.NewLine;
             }
@@ -265,15 +225,7 @@
                     {
                         object nameValue = row["NAME"];
                         object userNum = row["Badgenumber"];
-                        try
-                        {
                             users.Add(Int16.Parse(userNum.ToString()), nameValue.ToString());
-                        }
-                        catch (ArgumentException)
-                        {
-
-                        }
-
                     }
 
                 }
@@ -294,16 +246,16 @@
                 txbLog.Text += "Save log error! Can't get user names" + ex.Message + Environment.NewLine;
                 return;
             }
-
+            txbLog.Text += "End Get Users." + Environment.NewLine;
 
             StreamReader sr = new StreamReader(rowLog);
+            StreamWriter sw = new StreamWriter(csvLog);
             try
             {
-                StreamWriter sw = new StreamWriter(csvLog);
                 sw.WriteLine("Name," + sr.ReadLine() + ",Day,Month,Year");
                 if (users.Count <= 0)
                 {
-                    txbLog.Text += "User list i empty!" + Environment.NewLine;
+                    txbLog.Text += "User list is empty!" + Environment.NewLine;
                     sw.Close();
                     sr.Close();
                     delRow();
@@ -316,7 +268,15 @@
                         String[] arr = sr.ReadLine().Split(',');
                         String[] date = formatLog(arr[4]);
                         String line = "";
-                        line = users[Int16.Parse(arr[1])] + "," + arr[0] + "," + arr[1] + "," + arr[2] + ",PASSED," + date[0] + "," + date[1] + "," + date[2] + "," + date[3];
+                        if (users.ContainsKey(Int16.Parse(arr[1])))
+                        {
+                            line = users[Int16.Parse(arr[1])] + "," + arr[0] + "," + arr[1] + "," + arr[2] + ",PASSED," + date[0] + "," + date[1] + "," + date[2] + "," + date[3];
+                        }
+                        else
+                        {
+                            line = "deleted user," + arr[0] + "," + arr[1] + "," + arr[2] + ",PASSED," + date[0] + "," + date[1] + "," + date[2] + "," + date[3];
+
+                        }
                         sw.WriteLine(line);
                     }
 
@@ -330,6 +290,8 @@
                 Console.WriteLine("Save Log Exception: " + ex.Message);
                 txbLog.Text += ex.Message + Environment.NewLine;
             }
+            sw.Close();
+            sr.Close();
             delRow();
         }
 
@@ -391,6 +353,7 @@
                 table += "</tr>\n";
 
                 var stats = getUsersStats(year, month);
+
                 for (int i = 1; i < stats.GetLength(0); i++)
                 {
                     table += string.Format("<tr><td class='id'>{0}</td><td class='name'>{1}</td>", i, stats[i, 0]);
@@ -430,29 +393,38 @@
         private String[,] getUsersStats(int year, int month)
         {
             int monthDays = DateTime.DaysInMonth(year, month);
-            String[,] monthStats = new string[users.Count + 1, monthDays + 1];
+            String[,] monthStats = new string[users.Count + 10, monthDays + 1];
 
             if (File.Exists(csvLog))
             {
+                int users_count= 0;
+                txbLog.Text += "Geting users log from csv" + Environment.NewLine;
                 foreach (var user in users)
                 {
+                    users_count++;
                     StreamReader sr = new StreamReader(csvLog);
                     String[] tmp = sr.ReadLine().Split(',');
-                    monthStats[user.Key, 0] = user.Value;
+
+                    if (user.Value != "")
+                    {
+                    monthStats[users_count, 0] = user.Value;
+                    
                     for (int i = 0; i < monthDays; i++)
                     {
                         while (sr.Peek() > 0)
                         {
                             tmp = sr.ReadLine().Split(',');
-                            if (Int16.Parse(tmp[7]) == month && Int16.Parse(tmp[8]) == year && user.Value.Equals(tmp[0]))
-                            {
-                                monthStats[user.Key, Int16.Parse(tmp[6])] = " V ";
-                            }
+                                if (Int16.Parse(tmp[7]) == month && Int16.Parse(tmp[8]) == year && user.Value.Equals(tmp[0]))
+                                {
+                                    monthStats[users_count, Int16.Parse(tmp[6])] = " V ";
+                                }
                         }
                     }
+                    }
+
                     sr.Close();
                 }
-
+                txbLog.Text += "End Geting users log from csv" + Environment.NewLine;
             }
             else
             {
