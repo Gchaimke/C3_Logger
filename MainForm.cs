@@ -393,7 +393,7 @@
         private String[,] getUsersStats(int year, int month)
         {
             int monthDays = DateTime.DaysInMonth(year, month);
-            String[,] monthStats = new string[users.Count + 10, monthDays + 1];
+            String[,] monthStats = new string[users.Count + 1, monthDays + 1];
 
             if (File.Exists(csvLog))
             {
