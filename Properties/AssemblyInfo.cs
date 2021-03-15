@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Avdor-HLT")]
 [assembly: AssemblyProduct("C3_Logger")]
-[assembly: AssemblyCopyright("Copyright Avdor-HLT©  2020")]
+[assembly: AssemblyCopyright("Copyright Avdor-HLT©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
