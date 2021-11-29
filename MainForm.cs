@@ -20,7 +20,7 @@
         internal String mdfFile = Properties.Settings.Default.dbPath;
         internal string strcount = "";
         internal IntPtr h = IntPtr.Zero;
-        internal Dictionary<int, String> users = new Dictionary<int, String>();
+        internal SortedDictionary<int, String> users = new SortedDictionary<int, String>();
         public MainForm()
         {
             InitializeComponent();
@@ -40,47 +40,19 @@
             datePeack.Value = DateTime.Now;
         }
 
-        /// <summary>
-        /// The Connect.
-        /// </summary>
-        /// <param name="Parameters">The Parameters<see cref="string"/>.</param>
-        /// <returns>The <see cref="IntPtr"/>.</returns>
         [DllImport(@"lib\plcommpro.dll", EntryPoint = "Connect")]
-        public static extern IntPtr Connect(string Parameters);
+        public static extern IntPtr Connect_to_Device(string Parameters);
 
-        /// <summary>
-        /// The PullLastError.
-        /// </summary>
-        /// <returns>The <see cref="int"/>.</returns>
         [DllImport(@"lib\plcommpro.dll", EntryPoint = "PullLastError")]
         public static extern int PullLastError();
 
-        /// <summary>
-        /// The Disconnect.
-        /// </summary>
-        /// <param name="h">The h<see cref="IntPtr"/>.</param>
         [DllImport(@"lib\plcommpro.dll", EntryPoint = "Disconnect")]
         public static extern void Disconnect(IntPtr h);
 
-        /// <summary>
-        /// The GetDeviceData.
-        /// </summary>
-        /// <param name="h">The h<see cref="IntPtr"/>.</param>
-        /// <param name="buffer">The buffer<see cref="byte"/>.</param>
-        /// <param name="buffersize">The buffersize<see cref="int"/>.</param>
-        /// <param name="tablename">The tablename<see cref="string"/>.</param>
-        /// <param name="filename">The filename<see cref="string"/>.</param>
-        /// <param name="filter">The filter<see cref="string"/>.</param>
-        /// <param name="options">The options<see cref="string"/>.</param>
-        /// <returns>The <see cref="int"/>.</returns>
         [DllImport(@"lib\plcommpro.dll", EntryPoint = "GetDeviceData")]
         public static extern int GetDeviceData(IntPtr h, ref byte buffer, int buffersize, string tablename, string filename, string filter, string options);
 
-        /// <summary>
-        /// The btnConnect_Click.
-        /// </summary>
-        /// <returns>The <see cref="bool"/>.</returns>
-        private bool connect()
+        private bool Connect()
         {
             Cursor = Cursors.WaitCursor;
             string str = "";
@@ -89,7 +61,7 @@
                 ",timeout=3000,passwd=" + Properties.Settings.Default.Pass;  //protocol=TCP,ipaddress=192.168.2.46,port=4370,timeout=2000,passwd=
             if (IntPtr.Zero == h)
             {
-                h = Connect(str);
+                h = Connect_to_Device(str);
 
                 if (h != IntPtr.Zero)
                 {
@@ -144,7 +116,7 @@
                     txbLog.Text += ex.Message + Environment.NewLine;
                 }
                 txbLog.Text += "Start Save log " + Environment.NewLine;
-                saveLog();
+                SaveLog();
                 txbLog.Text += "Get " + ret + " records" + Environment.NewLine;
             }
             else
@@ -154,52 +126,44 @@
             }
         }
 
-        /// <summary>
-        /// The formatLog.
-        /// </summary>
-        /// <param name="rowTime">The rowTime<see cref="String"/>.</param>
-        /// <returns>The <see cref="String[]"/>.</returns>
-        private String[] formatLog(String rowTime)
+        private string[] FormatLog(String rowTime)
         {
             int second, minute, hour;
-            String strSecond, strMinute, strHour;
-            String[] date = new String[4]; //time,day,month,year
+            string strSecond, strMinute, strHour;
+            string[] date = new string[4]; //time,day,month,year
             int time = Int32.Parse(rowTime);
             second = time % 60;
             if (second < 10)
                 strSecond = "0" + second;
             else
                 strSecond = "" + second;
-            time = time / 60;
+            time /= 60;
             minute = time % 60;
             if (minute < 10)
                 strMinute = "0" + minute;
             else
                 strMinute = "" + minute;
-            time = time / 60;
+            time /= 60;
             hour = time % 24;
             if (hour < 10)
                 strHour = "0" + hour;
             else
                 strHour = "" + hour;
 
-            date[0] = String.Format("{0}:{1}:{2}", strHour, strMinute, strSecond);
+            date[0] = string.Format("{0}:{1}:{2}", strHour, strMinute, strSecond);
 
-            time = time / 24;
+            time /= 24;
             date[1] = (time % 31 + 1) + "";
 
-            time = time / 31;
+            time /= 31;
             date[2] = (time % 12 + 1) + "";
 
-            time = time / 12;
+            time /= 12;
             date[3] = (time + 2000) + "";
             return date;
         }
 
-        /// <summary>
-        /// The getUserNames.
-        /// </summary>
-        private void getUserNames()
+        private void GetUserNames()
         {
             mdfFile = Properties.Settings.Default.dbPath;
             if (!File.Exists(mdfFile))
@@ -225,21 +189,17 @@
                     {
                         object nameValue = row["NAME"];
                         object userNum = row["Badgenumber"];
-                            users.Add(Int16.Parse(userNum.ToString()), nameValue.ToString());
+                        users.Add(Int16.Parse(userNum.ToString()), nameValue.ToString());
                     }
-
                 }
             }
         }
 
-        /// <summary>
-        /// The saveLog.
-        /// </summary>
-        private void saveLog()
+        private void SaveLog()
         {
             try
             {
-                getUserNames();
+                GetUserNames();
             }
             catch (Exception ex)
             {
@@ -258,7 +218,7 @@
                     txbLog.Text += "User list is empty!" + Environment.NewLine;
                     sw.Close();
                     sr.Close();
-                    delRow();
+                    Delete_row_file();
                     return;
                 }
                 else
@@ -266,7 +226,7 @@
                     while (sr.Peek() > 0)
                     {
                         String[] arr = sr.ReadLine().Split(',');
-                        String[] date = formatLog(arr[4]);
+                        String[] date = FormatLog(arr[4]);
                         String line = "";
                         if (users.ContainsKey(Int16.Parse(arr[1])))
                         {
@@ -292,13 +252,10 @@
             }
             sw.Close();
             sr.Close();
-            delRow();
+            Delete_row_file();
         }
 
-        /// <summary>
-        /// The delRow.
-        /// </summary>
-        private void delRow()
+        private void Delete_row_file()
         {
             try
             {
@@ -317,12 +274,7 @@
             }
         }
 
-        /// <summary>
-        /// The buildHTML.
-        /// </summary>
-        /// <param name="year">The year<see cref="int"/>.</param>
-        /// <param name="month">The month<see cref="int"/>.</param>
-        private void buildHTML(int year, int month)
+        private void BuildHTML(int year, int month)
         {
             int nodays = DateTime.DaysInMonth(year, month);
             String reportFile = documents + year + "_" + month + ".html";
@@ -342,32 +294,28 @@
                     "<h2>ESD tests for month: <span id='date'>" + datePeack.Value.Month + "/" + datePeack.Value.Year + "</span></h2>";
 
                 sw.WriteLine(page_start);
-                String table = "<table id='tbMonth' border='1'>";
-                String[] headLine = sr.ReadLine().Split(',');
-                table += "<tr><th>ID</th> <th>User Name</th>";
+                string header = "<table id='tbMonth' border='1'><tr><th>User Name</th>";
                 for (int i = 1; i <= nodays; i++)
                 {
-                    table += "<th>" + i + "</th>";
+                    header += "<th>" + i + "</th>";
                 }
 
-                table += "</tr>\n";
-
-                var stats = getUsersStats(year, month);
-
+                header += "</tr>\n";
+                sw.WriteLine(header);
+                string table = "";
+                sr.ReadLine().Split(','); //read first line of file
+                var stats = GetUsersStats(year, month);
                 for (int i = 1; i < stats.GetLength(0); i++)
                 {
-                    table += string.Format("<tr><td class='id'>{0}</td><td class='name'>{1}</td>", i, stats[i, 0]);
+                    table += string.Format("<tr><td class='name'>{0}</td>", stats[i, 0]);
                     for (int j = 1; j < stats.GetLength(1); j++)
                     {
                         table += string.Format("<td class='day'>{0}</td>", stats[i, j]);
                     }
                     table += "</tr>\n";
                 }
-
                 sw.WriteLine(table);
-
-                String page_end = "</body></html>";
-                sw.WriteLine(page_end);
+                sw.WriteLine("</table></body></html>");
                 sr.Close();
                 sw.Close();
                 System.Diagnostics.Process.Start(documents);
@@ -384,42 +332,36 @@
             }
         }
 
-        /// <summary>
-        /// The getUsersStats.
-        /// </summary>
-        /// <param name="year">The year<see cref="int"/>.</param>
-        /// <param name="month">The month<see cref="int"/>.</param>
-        /// <returns>The <see cref="String[,]"/>.</returns>
-        private String[,] getUsersStats(int year, int month)
+        private string[,] GetUsersStats(int year, int month)
         {
             int monthDays = DateTime.DaysInMonth(year, month);
-            String[,] monthStats = new string[users.Count + 1, monthDays + 1];
+            string[,] monthStats = new string[users.Count + 1, monthDays + 1];
 
             if (File.Exists(csvLog))
             {
-                int users_count= 0;
+                int users_count = 0;
                 txbLog.Text += "Geting users log from csv" + Environment.NewLine;
                 foreach (var user in users)
                 {
                     users_count++;
                     StreamReader sr = new StreamReader(csvLog);
-                    String[] tmp = sr.ReadLine().Split(',');
+                    string[] tmp = sr.ReadLine().Split(',');
 
                     if (user.Value != "")
                     {
-                    monthStats[users_count, 0] = user.Value;
-                    
-                    for (int i = 0; i < monthDays; i++)
-                    {
-                        while (sr.Peek() > 0)
+                        monthStats[users_count, 0] = user.Value;
+
+                        for (int i = 0; i < monthDays; i++)
                         {
-                            tmp = sr.ReadLine().Split(',');
+                            while (sr.Peek() > 0)
+                            {
+                                tmp = sr.ReadLine().Split(',');
                                 if (Int16.Parse(tmp[7]) == month && Int16.Parse(tmp[8]) == year && user.Value.Equals(tmp[0]))
                                 {
                                     monthStats[users_count, Int16.Parse(tmp[6])] = " V ";
                                 }
+                            }
                         }
-                    }
                     }
 
                     sr.Close();
@@ -433,14 +375,9 @@
             return monthStats;
         }
 
-        /// <summary>
-        /// The lblAbout_Click.
-        /// </summary>
-        /// <param name="sender">The sender<see cref="object"/>.</param>
-        /// <param name="e">The e<see cref="EventArgs"/>.</param>
         private void lblAbout_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Created by Chaim Gorbov for Avdor-HELET \nProgram Version: "+CurrentVersion, "About C3-200 Logger", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Created by Chaim Gorbov for Avdor-HELET \nProgram Version: " + CurrentVersion, "About C3-200 Logger", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public string CurrentVersion
@@ -453,11 +390,7 @@
             }
         }
 
-        /// <summary>
-        /// The btnGetLog_Click.
-        /// </summary>
-        /// <param name="sender">The sender<see cref="object"/>.</param>
-        /// <param name="e">The e<see cref="EventArgs"/>.</param>
+
         private void btnGetLog_Click(object sender, EventArgs e)
         {
             if (!Directory.Exists(documents))
@@ -467,21 +400,21 @@
                 File.Copy(@"Resources\styles.css", documents + "styles.css");
             }
 
-            if (connect())
+            if (Connect())
             {
-                buildHTML(datePeack.Value.Year, datePeack.Value.Month);
+                BuildHTML(datePeack.Value.Year, datePeack.Value.Month);
             }
         }
 
-        /// <summary>
-        /// The btnSettings_Click.
-        /// </summary>
-        /// <param name="sender">The sender<see cref="object"/>.</param>
-        /// <param name="e">The e<see cref="EventArgs"/>.</param>
         private void btnSettings_Click(object sender, EventArgs e)
         {
             settingsForm = new SettingsForm();
             settingsForm.Show();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Delete_row_file();
         }
     }
 }
